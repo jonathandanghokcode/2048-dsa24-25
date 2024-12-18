@@ -10,13 +10,13 @@ public class Tile {
 		super();
 		this.value = value;
 	}
-	
+
 	public Tile(int value, int row, int col) {
 		this.value = value;
 		this.row = row;
 		this.col = col;
 	}
-	
+
 	public Tile() {
 		new Tile(0);
 	}
@@ -28,12 +28,19 @@ public class Tile {
 	public void setValue(int value) {
 		this.value = value;
 	}
-	
+
 	public void setPosition(int row, int col) {
 		this.row = row;
 		this.col = col;
 	}
-	
+	public int getRow() {
+		return row; // Thêm phương thức getRow
+	}
+
+	public int getCol() {
+		return col; // Thêm phương thức getCol
+	}
+
 	public int merging() {
 		return (this.value += this.value);
 	}
@@ -41,7 +48,7 @@ public class Tile {
 	public boolean hasMoved(int row, int col) {
 		return (!isEmpty() && ((this.row != row) || (this.col != col)));
 	}
-	
+
 	public boolean isEmpty() {
 		return (value == 0);
 	}
@@ -50,5 +57,5 @@ public class Tile {
 	public String toString() {
 		return "Tile [value=" + value + "]";
 	}
-	
+
 }

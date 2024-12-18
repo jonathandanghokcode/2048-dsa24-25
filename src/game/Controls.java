@@ -9,7 +9,7 @@ public class Controls implements KeyListener {
 	public void keyTyped(KeyEvent e) {}
 	public void keyReleased(KeyEvent e) {}
 	public void keyPressed(KeyEvent e) {
-		
+
 		int keyCode = e.getKeyCode();
 
 		switch (keyCode) {
@@ -28,15 +28,20 @@ public class Controls implements KeyListener {
 			case KeyEvent.VK_ESCAPE:
 				Game.WINDOW.dispose();
 				break;
+			case KeyEvent.VK_Z: // Nút Undo
+				Game.BOARD.undo();
+				break;
 			default:
 				break;
 		}
-		
+
 		Game.BOARD.isGameOver();
-		//Game.BOARD.show();
+//		Game.BOARD.show();
 		Game.WINDOW.repaint();
-		
+		Game.BOARD.decrementCountdown(); // Giảm giá trị countdown
+
 	}
+
 
 	public void bind() {
 		Game.WINDOW.addKeyListener(this);

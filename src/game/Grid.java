@@ -14,20 +14,20 @@ public class Grid extends JPanel {
 
 	private static final int TILE_RADIUS = 15;
 	private static final int WIN_MARGIN = 20;
-	private static final int TILE_SIZE = 65;
 	private static final int TILE_MARGIN = 15;
 	private static final String FONT = "Tahoma";
 
 	public Grid() {
-		super(true); // turn on doublebuffering
+		super(true); // turn on double buffering
 	}
 
+	@Override
 	public void paintComponent(Graphics g2) {
 		super.paintComponent(g2);
 
-		Graphics2D g = ((Graphics2D) g2); // cast to get context for drawing
+		Graphics2D g = (Graphics2D) g2; // cast to get context for drawing
 
-		/* turn on antialiasing for smooth and non-pixelated edges */
+		// Enable antialiasing for smooth edges
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
@@ -35,52 +35,68 @@ public class Grid extends JPanel {
 		drawTitle(g);
 		drawScoreBoard(g);
 		drawBoard(g);
+		drawCountdown(g);
 
 		g.dispose(); // release memory
 	}
 
 	private static void drawTitle(Graphics g) {
-		g.setFont( new Font(FONT, Font.BOLD, 38) );
-		g.setColor( ColorScheme.BRIGHT );
+		g.setFont(new Font(FONT, Font.BOLD, 38));
+		g.setColor(ColorScheme.BRIGHT);
 		g.drawString("2048", WIN_MARGIN, 50);
 	}
 
 	private void drawScoreBoard(Graphics2D g) {
 		int width = 80;
 		int height = 40;
-		int xOffset = Game.WINDOW.getWidth() - WIN_MARGIN - width;
+		int xOffset = getWidth() - WIN_MARGIN - width;
 		int yOffset = 20;
 		g.fillRoundRect(xOffset, yOffset, width, height, TILE_RADIUS, TILE_RADIUS);
-		g.setFont( new Font(FONT, Font.BOLD, 10) );
-		g.setColor( new Color(0XFFFFFF) );
+		g.setFont(new Font(FONT, Font.BOLD, 10));
+		g.setColor(new Color(0XFFFFFF));
 		g.drawString("SCORE", xOffset + 22, yOffset + 15);
-		g.setFont( new Font(FONT, Font.BOLD, 12) );
+		g.setFont(new Font(FONT, Font.BOLD, 12));
 		g.drawString(String.valueOf(Game.BOARD.getScore()), xOffset + 35, yOffset + 30);
 	}
 
 	private static void drawBackground(Graphics g) {
 		g.setColor(ColorScheme.WINBG);
-		g.fillRect(0, 0, Game.WINDOW.getWidth(), Game.WINDOW.getHeight());		
+		g.fillRect(0, 0, Game.WINDOW.getWidth(), Game.WINDOW.getHeight());
 	}
 
-	private static void drawBoard(Graphics g) {
+	private void drawBoard(Graphics g) {
+		int boardWidth = Math.min(getWidth() - 2 * WIN_MARGIN, getHeight() - 100);
+		int tileSize = (boardWidth - (TILE_MARGIN * 5)) / 4; // Calculate tile size based on the board width
+
 		g.translate(WIN_MARGIN, 80);
 		g.setColor(ColorScheme.GRIDBG);
-		g.fillRoundRect(0, 0, Game.WINDOW.getWidth() - (WIN_MARGIN * 2), 320 + TILE_MARGIN, TILE_RADIUS, TILE_RADIUS);
+		g.fillRoundRect(0, 0, boardWidth, boardWidth, TILE_RADIUS, TILE_RADIUS);
 
 		for (int row = 0; row < 4; row++) {
 			for (int col = 0; col < 4; col++) {
-				drawTile(g, Game.BOARD.getTileAt(row, col), col, row);
+				drawTile(g, Game.BOARD.getTileAt(row, col), col, row, tileSize);
 			}
 		}
 	}
+	private void drawCountdown(Graphics2D g) {
+		int width = 80;
+		int height = 40;
+		int xOffset = WIN_MARGIN + 20; // Vị trí x
+		int yOffset = 20; // Vị trí y
+		g.fillRoundRect(xOffset, yOffset, width, height, TILE_RADIUS, TILE_RADIUS);
+		g.setFont(new Font(FONT, Font.BOLD, 10));
+		g.setColor(new Color(0XFFFFFF));
+		g.drawString("COUNTDOWN", xOffset + 10, yOffset + 15);
+		g.setFont(new Font(FONT, Font.BOLD, 12));
+		g.drawString(String.valueOf(Game.BOARD.getCountdown()), xOffset + 25, yOffset + 30);
+	}
 
-	private static void drawTile(Graphics g, Tile tile, int x, int y) {
+	private static void drawTile(Graphics g, Tile tile, int x, int y, int tileSize) {
 		int value = tile.getValue();
-		int xOffset = x * (TILE_MARGIN + TILE_SIZE) + TILE_MARGIN;
-		int yOffset = y * (TILE_MARGIN + TILE_SIZE) + TILE_MARGIN;
+		int xOffset = x * (TILE_MARGIN + tileSize) + TILE_MARGIN;
+		int yOffset = y * (TILE_MARGIN + tileSize) + TILE_MARGIN;
 		g.setColor(Game.COLORS.getTileBackground(value));
-		g.fillRoundRect(xOffset, yOffset, TILE_SIZE, TILE_SIZE, TILE_RADIUS, TILE_RADIUS);
+		g.fillRoundRect(xOffset, yOffset, tileSize, tileSize, TILE_RADIUS, TILE_RADIUS);
 
 		g.setColor(Game.COLORS.getTileColor(value));
 
@@ -95,12 +111,10 @@ public class Grid extends JPanel {
 		final int h = -(int) fm.getLineMetrics(s, g).getBaselineOffsets()[2];
 
 		if (value != 0) {
-			Game.BOARD.getTileAt(y, x).setPosition(y, x); // tile gets its new position
-			g.drawString(s, xOffset + (TILE_SIZE - w) / 2, yOffset + TILE_SIZE - (TILE_SIZE - h) / 2 - 2);
+			g.drawString(s, xOffset + (tileSize - w) / 2, yOffset + tileSize - (tileSize - h) / 2 - 2);
 		}
-		
-		
 
+		// Handle win/loss messages
 		if (Game.BOARD.getWonOrLost() != null && !Game.BOARD.getWonOrLost().isEmpty()) {
 			g.setColor(new Color(255, 255, 255, 40));
 			g.fillRect(0, 0, Game.WINDOW.getWidth(), Game.WINDOW.getHeight());
@@ -109,8 +123,5 @@ public class Grid extends JPanel {
 			g.drawString("You " + Game.BOARD.getWonOrLost() + "!", 68, 150);
 			Game.CONTROLS.unbind();
 		}
-
-
 	}
-
 }

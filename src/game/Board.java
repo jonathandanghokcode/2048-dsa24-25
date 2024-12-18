@@ -12,6 +12,7 @@ public class Board {
 	private boolean gameover = false; 		// game is over when 2048 tile is found
 	private String wonOrLost;				// won or lost
 	private boolean genNewTile = false;		// generate new tile when any tile moved
+	private int moveCount = 0; // Biến đếm lượt di chuyển
 	private List<List<Tile>> tiles;			// board
 	public Board(int size) {
 		super();
@@ -30,7 +31,7 @@ public class Board {
 			}
 		}
 	}
-	
+
 	private void start() {
 		Game.CONTROLS.bind();
 		initialize();
@@ -64,7 +65,9 @@ public class Board {
 	public void remTileAt(int row, int col) {
 		tiles.get(row).remove(col);
 	}
-	
+
+	private List<List<Tile>> previousTiles; // Lưu trạng thái trước đó
+
 	public int getScore() {
 		return score;
 	}
@@ -137,7 +140,7 @@ public class Board {
 		for (int col = 0; col < tiles.size(); col++) {
 			if (moved.get(col).hasMoved(col, row)) {
 				genNewTile = true;
-			}			
+			}
 			setTileAt(col, row, moved.get(col));
 		}
 
@@ -145,7 +148,7 @@ public class Board {
 	}
 
 	public void moveUp() {
-
+		saveState(); // Lưu trạng thái trước
 		List<Tile> moved;
 
 		for (int row = 0; row < size; row++) {
@@ -156,11 +159,11 @@ public class Board {
 			moved = setColToBoard(moved, row);
 
 		}
-
+		moveCount++;
 	}
 
 	public void moveDown() {
-
+		saveState(); // Lưu trạng thái trước
 		List<Tile> moved;
 
 		for (int row = 0; row < size; row++) {
@@ -171,11 +174,11 @@ public class Board {
 			moved = setColToBoard(moved, row);
 
 		}
-		
+		moveCount++;
 	}
 
 	public void moveLeft() {
-
+		saveState(); // Lưu trạng thái trước
 		List<Tile> moved;
 
 		for (int row = 0; row < size; row++) {
@@ -186,13 +189,13 @@ public class Board {
 			moved = setRowToBoard(moved, row);
 
 		}
-		
+		moveCount++;
 	}
 
 	public void moveRight() {
-		
+		saveState(); // Lưu trạng thái trước
 		List<Tile> moved;
-		
+
 		for (int row = 0; row < size; row++) {
 
 			moved = removeEmptyTilesRows(row);
@@ -201,33 +204,74 @@ public class Board {
 			moved = setRowToBoard(moved, row);
 
 		}
-		
+		moveCount++;
 	}
-	
+
 	public void isGameOver() {
-		
 		if (gameover) {
-			// vyhrál jsi (na desce je dláždice 2048)
-			// end(true);
 			setWonOrLost("WON");
+//			Game.LEADERBOARD.addScore(score); // Thêm điểm vào leaderboard
+//			Game.WINDOW.showLeaderboard(); // Hiển thị leaderboard
 		} else {
 			if (isFull()) {
 				if (!isMovePossible()) {
-					// you lost (board is full with no tiles to merge)
-					// end(false);
 					setWonOrLost("LOST");
+//					Game.LEADERBOARD.addScore(score); // Thêm điểm vào leaderboard
+//					Game.WINDOW.showLeaderboard(); // Hiển thị leaderboard
 				}
-				
 			} else {
 				newRandomTile(); // game continues
 			}
 		}
 	}
-	
+
+	private void saveState() {
+		previousTiles = new ArrayList<>();
+		for (List<Tile> row : tiles) {
+			List<Tile> rowCopy = new ArrayList<>();
+			for (Tile tile : row) {
+				rowCopy.add(new Tile(tile.getValue(), tile.getRow(), tile.getCol()));
+			}
+			previousTiles.add(rowCopy);
+		}
+	}
+	private int countdown = 20; // Biến đếm từ 20 xuống 0
+
+	public void resetCountdown() {
+		countdown = 20; // Đặt lại countdown về 20
+	}
+	public void undo() {
+		if (moveCount >= 20) { // Chỉ cho phép undo nếu đã di chuyển đủ 20 lượt
+			// Logic thực hiện undo
+			if (previousTiles != null) {
+				tiles = previousTiles; // Khôi phục trạng thái trước
+				previousTiles = null;  // Xóa trạng thái trước để không khôi phục nhiều lần
+				Game.WINDOW.repaint();  // Cập nhật giao diện
+			}
+			moveCount = 0; // Đặt lại đếm lượt di chuyển sau khi thực hiện undo
+			countdown = 20; // Reset lại đếm ngược sau khi undo
+		} else {
+			System.out.println("Bạn cần thực hiện 20 lượt di chuyển trước khi có thể undo.");
+		}
+	}
+
+	// Phương thức giảm giá trị countdown
+	public void decrementCountdown() {
+		if (countdown > 0) {
+			countdown--;
+		}
+	}
+
+	// Phương thức để lấy giá trị countdown
+	public int getCountdown() {
+		return countdown;
+	}
+
+
 	private boolean isFull() {
 		return emptyTiles == 0;
 	}
-	
+
 	private boolean isMovePossible() {
 		for (int row = 0; row < size; row++) {
 			for (int col = 0; col < size - 1; col++) {
@@ -236,7 +280,7 @@ public class Board {
 				}
 			}
 		}
-		
+
 		for (int row = 0; row < size - 1; row++) {
 			for (int col = 0; col < size; col++) {
 				if (getTileAt(col, row).getValue() == getTileAt(col, row + 1).getValue()) {
@@ -267,6 +311,19 @@ public class Board {
 			emptyTiles--;
 			genNewTile = false;
 		}
+	}
+
+	// Phương thức khởi động lại trò chơi
+	public void reset() {
+		this.tiles.clear(); // Xóa toàn bộ trạng thái bảng
+		this.score = 0; // Đặt lại điểm số
+		this.emptyTiles = this.size * this.size; // Reset số ô trống
+		this.gameover = false; // Reset trạng thái gameover
+		this.wonOrLost = null; // Reset trạng thái thắng/thua
+		this.genNewTile = false; // Reset trạng thái tạo ô mới
+		initialize(); // Tạo lại bảng
+		genInitTiles(); // Tạo lại các ô ban đầu
+		resetCountdown(); // Đặt lại countdown về 20
 	}
 
 	protected void show() {
