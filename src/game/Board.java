@@ -160,6 +160,7 @@ public class Board {
 
 		}
 		moveCount++;
+		decrementCountdown();
 	}
 
 	public void moveDown() {
@@ -175,6 +176,7 @@ public class Board {
 
 		}
 		moveCount++;
+		decrementCountdown();
 	}
 
 	public void moveLeft() {
@@ -190,6 +192,7 @@ public class Board {
 
 		}
 		moveCount++;
+		decrementCountdown();
 	}
 
 	public void moveRight() {
@@ -205,6 +208,7 @@ public class Board {
 
 		}
 		moveCount++;
+		decrementCountdown();
 	}
 
 	public void isGameOver() {
@@ -271,6 +275,7 @@ public class Board {
 	private boolean isFull() {
 		return emptyTiles == 0;
 	}
+
 
 	private boolean isMovePossible() {
 		for (int row = 0; row < size; row++) {
@@ -345,4 +350,21 @@ public class Board {
 		this.wonOrLost = wonOrLost;
 	}
 
+	public void swapTiles(Tile tile1, Tile tile2) {
+		if (tile1 == null || tile2 == null) {
+			System.out.println("Một trong hai ô là null.");
+			return;
+		}
+
+		// Hoán đổi giá trị giữa hai ô
+		int tempValue = tile1.getValue();
+		tile1.setValue(tile2.getValue());
+		tile2.setValue(tempValue);
+
+		// Cập nhật vị trí của các ô
+		int tempRow = tile1.getRow();
+		int tempCol = tile1.getCol();
+		tile1.setPosition(tile2.getRow(), tile2.getCol());
+		tile2.setPosition(tempRow, tempCol);
+	}
 }

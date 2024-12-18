@@ -40,6 +40,7 @@ public class Window extends JFrame {
 		// Bottom panel for buttons
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.add(createSimpleButton("NEW GAME"));
+
 //		buttonPanel.add(createSimpleButton("UNDO")); // Thêm nút UNDO
 		mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
