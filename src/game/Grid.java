@@ -7,6 +7,10 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import javax.swing.JPanel;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import javax.swing.JButton;
+import javax.swing.JPanel;
 
 public class Grid extends JPanel {
 
@@ -20,6 +24,7 @@ public class Grid extends JPanel {
 
 	public Grid() {
 		super(true); // turn on doublebuffering
+
 	}
 
 	public void paintComponent(Graphics g2) {
@@ -71,7 +76,7 @@ public class Grid extends JPanel {
 		g.setFont(new Font(FONT, Font.BOLD, 12));
 		g.drawString(String.valueOf(Game.BOARD.getBestScore()), xOffset + 35, yOffset + 30);
 	}
-	private static void drawBottombar(Graphics g) {
+	private void drawBottombar(Graphics g) {
 		int width = 360;
 		int height = 60;
 		int yOffset = 400;
@@ -79,7 +84,13 @@ public class Grid extends JPanel {
 
 		g.setColor(ColorScheme.GRIDBG);
 		g.fillRoundRect(xoffset, yOffset, width, height, TILE_RADIUS, TILE_RADIUS);
+		JPanel bottomBar = new JPanel();
+		bottomBar.setLayout(null); // use null layout for custom positioning
+		bottomBar.setBounds(WIN_MARGIN + 20, 400, Game.WINDOW.getWidth() - (WIN_MARGIN * 2) - 40, 50); // adjust as needed
+
+
 	}
+
 
 
 
@@ -134,6 +145,7 @@ public class Grid extends JPanel {
 			g.setColor(ColorScheme.BRIGHT);
 			g.setFont(new Font(FONT, Font.BOLD, 30));
 			g.drawString("You " + Game.BOARD.getWonOrLost() + "!", 100, 150);
+
 			Game.CONTROLS.unbind();
 		}
 

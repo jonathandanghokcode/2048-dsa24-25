@@ -28,6 +28,9 @@ public class Controls implements KeyListener {
 			case KeyEvent.VK_ESCAPE:
 				Game.WINDOW.dispose();
 				break;
+			case KeyEvent.VK_ENTER:
+				Game.BOARD.reset();
+				break;
 			default:
 				break;
 		}

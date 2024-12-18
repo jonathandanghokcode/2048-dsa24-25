@@ -21,6 +21,7 @@ public class Board {
 		this.tiles = new ArrayList<>();
 
 		start();
+		reset();
 	}
 	public int getBestScore() {
 		return bestScore;
@@ -39,7 +40,22 @@ public class Board {
 		Game.CONTROLS.bind();
 		initialize();
 		genInitTiles();
-		//show();
+
+	}
+	public void reset() {
+		tiles = new ArrayList<>();
+		for (int i = 0; i < size; i++) {
+			List<Tile> row = new ArrayList<>();
+			for (int j = 0; j < size; j++) {
+				row.add(new Tile());
+			}
+			tiles.add(row);
+		}
+		score = 0;
+		emptyTiles = size * size;
+		gameover = false;
+		wonOrLost = "";
+		genInitTiles();
 	}
 	public int getSize() {
 		return size;
