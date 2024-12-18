@@ -9,7 +9,8 @@ public class Board {
 	private int score; 						// game score
 	private int emptyTiles;					// number of tiles with zero value
 	private int initTiles = 2; 				// number of tiles board starts with (usually two tiles)
-	private boolean gameover = false; 		// game is over when 2048 tile is found
+	private boolean gameover = false;// game is over when 2048 tile is found
+	private int bestScore = 0;				// best score
 	private String wonOrLost;				// won or lost
 	private boolean genNewTile = false;		// generate new tile when any tile moved
 	private List<List<Tile>> tiles;			// board
@@ -20,6 +21,9 @@ public class Board {
 		this.tiles = new ArrayList<>();
 
 		start();
+	}
+	public int getBestScore() {
+		return bestScore;
 	}
 
 	private void initialize() {
@@ -207,14 +211,10 @@ public class Board {
 	public void isGameOver() {
 		
 		if (gameover) {
-			// vyhrál jsi (na desce je dláždice 2048)
-			// end(true);
 			setWonOrLost("WON");
 		} else {
 			if (isFull()) {
 				if (!isMovePossible()) {
-					// you lost (board is full with no tiles to merge)
-					// end(false);
 					setWonOrLost("LOST");
 				}
 				

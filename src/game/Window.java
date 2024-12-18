@@ -3,6 +3,8 @@ package game;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -15,8 +17,8 @@ import javax.swing.border.LineBorder;
 
 public class Window extends JFrame {
 	private static final long serialVersionUID = -8804446439773037674L;
-	private int width = 375;
-	private int height = 450;
+	private int width = 420;
+	private int height = 600;
 
 	public Window(String title) {
 		super(title); // Window title
@@ -33,10 +35,7 @@ public class Window extends JFrame {
 		
         JPanel panel = new JPanel();
 		panel.add(createSimpleButton("NEW GAME"));
-		
         panel.setPreferredSize(new Dimension(1000, 760));
-
-
 		this.setVisible(true); // show window
 
 	}
@@ -51,6 +50,8 @@ public class Window extends JFrame {
 		button.setBorder(compound);
 		return button;
 	}
+
+
 
 	public int getWidth() {
 		return width;

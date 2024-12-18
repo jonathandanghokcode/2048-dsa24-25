@@ -35,6 +35,8 @@ public class Grid extends JPanel {
 		drawTitle(g);
 		drawScoreBoard(g);
 		drawBoard(g);
+		drawBestScoreBoard(g);
+		drawBottombar(g);
 
 		g.dispose(); // release memory
 	}
@@ -57,6 +59,30 @@ public class Grid extends JPanel {
 		g.setFont( new Font(FONT, Font.BOLD, 12) );
 		g.drawString(String.valueOf(Game.BOARD.getScore()), xOffset + 35, yOffset + 30);
 	}
+	private void drawBestScoreBoard(Graphics2D g) {
+		int width = 80;
+		int height = 40;
+		int xOffset = Game.WINDOW.getWidth() - WIN_MARGIN -  (2*width) - TILE_MARGIN - 25;
+		int yOffset =  TILE_MARGIN-74;
+		g.fillRoundRect(xOffset, yOffset, width, height, TILE_RADIUS, TILE_RADIUS);
+		g.setFont(new Font(FONT, Font.BOLD, 10));
+		g.setColor(new Color(0XFFFFFF));
+		g.drawString("BEST", xOffset + 27, yOffset + 15);
+		g.setFont(new Font(FONT, Font.BOLD, 12));
+		g.drawString(String.valueOf(Game.BOARD.getBestScore()), xOffset + 35, yOffset + 30);
+	}
+	private static void drawBottombar(Graphics g) {
+		int width = 360;
+		int height = 60;
+		int yOffset = 400;
+		int xoffset = 6;
+
+		g.setColor(ColorScheme.GRIDBG);
+		g.fillRoundRect(xoffset, yOffset, width, height, TILE_RADIUS, TILE_RADIUS);
+	}
+
+
+
 
 	private static void drawBackground(Graphics g) {
 		g.setColor(ColorScheme.WINBG);
@@ -102,11 +128,12 @@ public class Grid extends JPanel {
 		
 
 		if (Game.BOARD.getWonOrLost() != null && !Game.BOARD.getWonOrLost().isEmpty()) {
+
 			g.setColor(new Color(255, 255, 255, 40));
-			g.fillRect(0, 0, Game.WINDOW.getWidth(), Game.WINDOW.getHeight());
+			g.fillRoundRect(0, 0, Game.WINDOW.getWidth() - (WIN_MARGIN * 2), 320 + TILE_MARGIN, TILE_RADIUS, TILE_RADIUS);
 			g.setColor(ColorScheme.BRIGHT);
 			g.setFont(new Font(FONT, Font.BOLD, 30));
-			g.drawString("You " + Game.BOARD.getWonOrLost() + "!", 68, 150);
+			g.drawString("You " + Game.BOARD.getWonOrLost() + "!", 100, 150);
 			Game.CONTROLS.unbind();
 		}
 
