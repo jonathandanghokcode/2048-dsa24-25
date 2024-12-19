@@ -81,8 +81,8 @@ public class Grid extends JPanel {
 	private void drawCountdown(Graphics2D g) {
 		int width = 80;
 		int height = 40;
-		int xOffset = WIN_MARGIN + 20; // Vị trí x
-		int yOffset = 20; // Vị trí y
+		int xOffset = Game.WINDOW.getWidth() - WIN_MARGIN -  (2*width) - TILE_MARGIN - 25;
+		int yOffset = TILE_MARGIN-74;
 		g.fillRoundRect(xOffset, yOffset, width, height, TILE_RADIUS, TILE_RADIUS);
 		g.setFont(new Font(FONT, Font.BOLD, 10));
 		g.setColor(new Color(0XFFFFFF));
