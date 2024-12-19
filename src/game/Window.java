@@ -40,7 +40,6 @@ public class Window extends JFrame {
 		// Bottom panel for buttons
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.add(createSimpleButton("NEW GAME"));
-
 //		buttonPanel.add(createSimpleButton("UNDO")); // Thêm nút UNDO
 		mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
@@ -91,16 +90,10 @@ public class Window extends JFrame {
 //		return gamePanel;
 //	}
 
-
-	//	public void showLeaderboard() {
-//		List<Integer> topScores = Game.LEADERBOARD.getTopScores();
-//		System.out.println("Leaderboard:");
-//		for (int score : topScores) {
-//			System.out.println(score);
-//		}
-//	}
 	private void restartGame() {
-		Game.BOARD.reset(); // Reset trạng thái bảng trò chơi
+		Game.BOARD.reset();// Reset trạng thái bảng trò chơi
+		Game.CONTROLS.unbind(); // Hủy bỏ các listener trước đó
+		Game.CONTROLS.bind(); // Gắn lại listener
 		this.repaint(); // Vẽ lại giao diện
 		this.requestFocus(); // Đảm bảo JFrame lấy focus
 	}

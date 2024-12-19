@@ -2,6 +2,7 @@ package game;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 public class Board {
 
@@ -13,12 +14,16 @@ public class Board {
 	private String wonOrLost;				// won or lost
 	private boolean genNewTile = false;		// generate new tile when any tile moved
 	private int moveCount = 0; // Biến đếm lượt di chuyển
+	private int countdown = 20; // Biến đếm từ 20 xuống 0
 	private List<List<Tile>> tiles;			// board
+
+	private Stack<List<List<Tile>>> historyStack; // Stack lưu trạng thái trước đó
 	public Board(int size) {
 		super();
 		this.size = size;
 		this.emptyTiles = this.size * this.size;
 		this.tiles = new ArrayList<>();
+		this.historyStack = new Stack<>(); // Khởi tạo Stack
 
 		start();
 	}
@@ -65,9 +70,6 @@ public class Board {
 	public void remTileAt(int row, int col) {
 		tiles.get(row).remove(col);
 	}
-
-	private List<List<Tile>> previousTiles; // Lưu trạng thái trước đó
-
 	public int getScore() {
 		return score;
 	}
@@ -160,7 +162,9 @@ public class Board {
 
 		}
 		moveCount++;
-		decrementCountdown();
+		countdown--;
+		decrementCountdownSwap();
+
 	}
 
 	public void moveDown() {
@@ -176,7 +180,8 @@ public class Board {
 
 		}
 		moveCount++;
-		decrementCountdown();
+		countdown--;
+		decrementCountdownSwap();
 	}
 
 	public void moveLeft() {
@@ -192,7 +197,8 @@ public class Board {
 
 		}
 		moveCount++;
-		decrementCountdown();
+		countdown--;
+		decrementCountdownSwap();
 	}
 
 	public void moveRight() {
@@ -208,20 +214,17 @@ public class Board {
 
 		}
 		moveCount++;
-		decrementCountdown();
+		countdown--;
+		decrementCountdownSwap();
 	}
 
 	public void isGameOver() {
 		if (gameover) {
 			setWonOrLost("WON");
-//			Game.LEADERBOARD.addScore(score); // Thêm điểm vào leaderboard
-//			Game.WINDOW.showLeaderboard(); // Hiển thị leaderboard
 		} else {
 			if (isFull()) {
 				if (!isMovePossible()) {
 					setWonOrLost("LOST");
-//					Game.LEADERBOARD.addScore(score); // Thêm điểm vào leaderboard
-//					Game.WINDOW.showLeaderboard(); // Hiển thị leaderboard
 				}
 			} else {
 				newRandomTile(); // game continues
@@ -229,46 +232,54 @@ public class Board {
 		}
 	}
 
+	// Cai nay cho undo
+	public void resetCountdown() {
+		countdown = 20; // Đặt lại countdown về 20
+	}
+
 	private void saveState() {
-		previousTiles = new ArrayList<>();
+		List<List<Tile>> currentState = new ArrayList<>();
 		for (List<Tile> row : tiles) {
 			List<Tile> rowCopy = new ArrayList<>();
 			for (Tile tile : row) {
 				rowCopy.add(new Tile(tile.getValue(), tile.getRow(), tile.getCol()));
 			}
-			previousTiles.add(rowCopy);
+			currentState.add(rowCopy);
 		}
+		historyStack.push(currentState); // Đẩy trạng thái hiện tại vào Stack
 	}
-	private int countdown = 20; // Biến đếm từ 20 xuống 0
 
-	public void resetCountdown() {
-		countdown = 20; // Đặt lại countdown về 20
-	}
 	public void undo() {
-		if (moveCount >= 20) { // Chỉ cho phép undo nếu đã di chuyển đủ 20 lượt
-			// Logic thực hiện undo
-			if (previousTiles != null) {
-				tiles = previousTiles; // Khôi phục trạng thái trước
-				previousTiles = null;  // Xóa trạng thái trước để không khôi phục nhiều lần
-				Game.WINDOW.repaint();  // Cập nhật giao diện
-			}
-			moveCount = 0; // Đặt lại đếm lượt di chuyển sau khi thực hiện undo
-			countdown = 20; // Reset lại đếm ngược sau khi undo
-		} else {
-			System.out.println("Bạn cần thực hiện 20 lượt di chuyển trước khi có thể undo.");
-		}
-	}
-
-	// Phương thức giảm giá trị countdown
-	public void decrementCountdown() {
 		if (countdown > 0) {
-			countdown--;
+			System.out.println("Not enough turns to undo.");
+			return;
 		}
+		if (historyStack.isEmpty()) {
+			System.out.println("There is no state to undo.");
+			return;
+		}
+		tiles = historyStack.pop(); // Lấy trạng thái gần nhất từ Stack
+		Game.WINDOW.repaint(); // Cập nhật giao diện
+		countdown = 20; // Đặt lại countdown
 	}
 
 	// Phương thức để lấy giá trị countdown
 	public int getCountdown() {
-		return countdown;
+		return Math.max(0, countdown);
+	}
+
+	// Cai nay den swap
+	private int swapMoveCount = 30; // Biến để đếm số lượt cho swap
+	public void resetCountdownSwap() {
+		swapMoveCount = 30; // Đặt lại countdown về 20
+	}
+	public void decrementCountdownSwap() {
+		if (swapMoveCount > 0) {
+			swapMoveCount--;
+		}
+	}
+	public int getCountdownSwap() {
+		return swapMoveCount;
 	}
 
 
@@ -329,6 +340,7 @@ public class Board {
 		initialize(); // Tạo lại bảng
 		genInitTiles(); // Tạo lại các ô ban đầu
 		resetCountdown(); // Đặt lại countdown về 20
+		resetCountdownSwap(); // Đặt lại countdownSwap về 30
 	}
 
 	protected void show() {
@@ -367,4 +379,5 @@ public class Board {
 		tile1.setPosition(tile2.getRow(), tile2.getCol());
 		tile2.setPosition(tempRow, tempCol);
 	}
+
 }

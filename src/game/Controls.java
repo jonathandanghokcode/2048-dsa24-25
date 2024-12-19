@@ -38,12 +38,15 @@ public class Controls implements KeyListener {
 			case KeyEvent.VK_Z: // Nút Undo
 				Game.BOARD.undo();
 				break;
-			case KeyEvent.VK_S: // Giả sử 'S' để swap
-				if (firstSelectedTile != null && secondSelectedTile != null) {
+			case KeyEvent.VK_S: // Nút S để swap
+				if (firstSelectedTile != null && secondSelectedTile != null && Game.BOARD.getCountdownSwap() == 0) {
 					Game.BOARD.swapTiles(firstSelectedTile, secondSelectedTile);
-					firstSelectedTile = null; // Reset lựa chọn
-					secondSelectedTile = null; // Reset lựa chọn
-					Game.WINDOW.repaint(); // Cập nhật giao diện
+					// Đặt lại các ô đã chọn
+					firstSelectedTile = null;
+					secondSelectedTile = null;
+					Game.BOARD.resetCountdownSwap(); // Đặt lại đếm ngược
+				} else {
+					System.out.println("Cannot be swapped, wait until the countdown is complete.");
 				}
 				break;
 			default:
@@ -65,5 +68,31 @@ public class Controls implements KeyListener {
 	public void unbind() {
 		Game.WINDOW.removeKeyListener(this);
 	}
+	public void selectTile(Tile tile) {
+		if (firstSelectedTile == null) {
+			// Chọn ô đầu tiên
+			firstSelectedTile = tile;
+		} else if (secondSelectedTile == null) {
+			// Nếu ô thứ hai được chọn là ô đầu tiên, hủy chọn ô đầu tiên
+			if (tile == firstSelectedTile) {
+				firstSelectedTile = null; // Hủy chọn ô đầu tiên
+			} else {
+				// Chọn ô thứ hai
+				secondSelectedTile = tile;
+			}
+		} else {
+			// Nếu đã chọn 2 ô, đặt lại và chọn ô mới
+			firstSelectedTile = tile; // Hủy chọn ô thứ nhất và chọn ô mới
+			secondSelectedTile = null;
+		}
+	}
+	public Tile getFirstSelectedTile() {
+		return firstSelectedTile;
+	}
+
+	public Tile getSecondSelectedTile() {
+		return secondSelectedTile;
+	}
+
 
 }

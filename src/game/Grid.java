@@ -6,6 +6,8 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import javax.swing.JPanel;
 
 public class Grid extends JPanel {
@@ -19,6 +21,12 @@ public class Grid extends JPanel {
 
 	public Grid() {
 		super(true); // turn on double buffering
+		addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				handleMouseClick(e);
+			}
+		});
 	}
 
 	@Override
@@ -26,6 +34,8 @@ public class Grid extends JPanel {
 		super.paintComponent(g2);
 
 		Graphics2D g = (Graphics2D) g2; // cast to get context for drawing
+
+
 
 		// Enable antialiasing for smooth edges
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -36,6 +46,7 @@ public class Grid extends JPanel {
 		drawScoreBoard(g);
 		drawBoard(g);
 		drawCountdown(g);
+		drawCountdown_swap(g);
 
 		g.dispose(); // release memory
 	}
@@ -79,40 +90,67 @@ public class Grid extends JPanel {
 		}
 	}
 	private void drawCountdown(Graphics2D g) {
-		int width = 80;
+		int width = 120;
 		int height = 40;
 		int xOffset = Game.WINDOW.getWidth() - WIN_MARGIN -  (2*width) - TILE_MARGIN - 25;
 		int yOffset = TILE_MARGIN-74;
+		g.setColor(new Color(0x8B5A2B)); // Thay đổi màu sắc theo yêu cầu
 		g.fillRoundRect(xOffset, yOffset, width, height, TILE_RADIUS, TILE_RADIUS);
 		g.setFont(new Font(FONT, Font.BOLD, 10));
 		g.setColor(new Color(0XFFFFFF));
-		g.drawString("COUNTDOWN", xOffset + 10, yOffset + 15);
+		g.drawString("COUNTDOWN UNDO", xOffset + 10, yOffset + 15);
 		g.setFont(new Font(FONT, Font.BOLD, 12));
 		g.drawString(String.valueOf(Game.BOARD.getCountdown()), xOffset + 25, yOffset + 30);
+	}
+
+	private void drawCountdown_swap(Graphics2D g) {
+		int width = 120; // Đặt lại width để đồng bộ
+		int height = 40; // Giữ nguyên height
+		int xOffset = Game.WINDOW.getWidth() - WIN_MARGIN - (2*width) - TILE_MARGIN - 150; // Đặt xOffset sao cho ở gần drawCountdown
+		int yOffset = TILE_MARGIN-74; // Điều chỉnh vị trí y để tách biệt với drawCountdown
+		g.setColor(new Color(0x8B5A2B)); // Thay đổi màu sắc theo yêu cầu
+		g.fillRoundRect(xOffset, yOffset, width, height, TILE_RADIUS, TILE_RADIUS);
+		g.setFont(new Font(FONT, Font.BOLD, 10));
+		g.setColor(new Color(0XFFFFFF));
+		g.drawString("COUNTDOWN SWAP", xOffset + 10, yOffset + 15);
+		g.setFont(new Font(FONT, Font.BOLD, 12));
+		g.drawString(String.valueOf(Game.BOARD.getCountdownSwap()), xOffset + 25, yOffset + 30);
 	}
 
 	private static void drawTile(Graphics g, Tile tile, int x, int y, int tileSize) {
 		int value = tile.getValue();
 		int xOffset = x * (TILE_MARGIN + tileSize) + TILE_MARGIN;
 		int yOffset = y * (TILE_MARGIN + tileSize) + TILE_MARGIN;
+
+
+		// Vẽ nền cho ô
 		g.setColor(Game.COLORS.getTileBackground(value));
 		g.fillRoundRect(xOffset, yOffset, tileSize, tileSize, TILE_RADIUS, TILE_RADIUS);
 
+		// Kiểm tra xem ô có phải là ô đã chọn không
+		boolean isFirstSelected = tile == Game.CONTROLS.getFirstSelectedTile();
+		boolean isSecondSelected = tile == Game.CONTROLS.getSecondSelectedTile();
+
+		// Vẽ highlight cho ô đã chọn
+		if (isFirstSelected || isSecondSelected) {
+			g.setColor(Color.YELLOW); // Màu vàng nổi bật
+			g.fillRoundRect(xOffset, yOffset, tileSize, tileSize, TILE_RADIUS, TILE_RADIUS);
+		}
+
+		// Vẽ chữ số trên ô
 		g.setColor(Game.COLORS.getTileColor(value));
-
-		final int size = value < 100 ? 36 : value < 1000 ? 32 : 24;
-		final Font font = new Font(FONT, Font.BOLD, size);
+		final Font font = new Font(FONT, Font.BOLD, value < 100 ? 36 : value < 1000 ? 32 : 24);
 		g.setFont(font);
-
 		String s = String.valueOf(value);
 		final FontMetrics fm = g.getFontMetrics(font);
-
 		final int w = fm.stringWidth(s);
 		final int h = -(int) fm.getLineMetrics(s, g).getBaselineOffsets()[2];
 
 		if (value != 0) {
 			g.drawString(s, xOffset + (tileSize - w) / 2, yOffset + tileSize - (tileSize - h) / 2 - 2);
 		}
+
+
 
 		// Handle win/loss messages
 		if (Game.BOARD.getWonOrLost() != null && !Game.BOARD.getWonOrLost().isEmpty()) {
@@ -122,6 +160,35 @@ public class Grid extends JPanel {
 			g.setFont(new Font(FONT, Font.BOLD, 30));
 			g.drawString("You " + Game.BOARD.getWonOrLost() + "!", 68, 150);
 			Game.CONTROLS.unbind();
+		}
+	}
+	private void handleMouseClick(MouseEvent e) {
+		int x = e.getX();
+		int y = e.getY();
+
+		// Tính kích thước ô dựa trên chiều rộng của bảng
+		int boardWidth = Math.min(getWidth() - 2 * WIN_MARGIN, getHeight() - 100);
+		int tileSize = (boardWidth - (TILE_MARGIN * 5)) / 4; // Kích thước ô
+
+		// Tính toán chỉ số hàng và cột dựa trên vị trí nhấp chuột
+		int col = (x - WIN_MARGIN) / (tileSize + TILE_MARGIN);
+		int row = (y - 80) / (tileSize + TILE_MARGIN);
+
+		// Kiểm tra giới hạn
+		if (row >= 0 && row < 4 && col >= 0 && col < 4) {
+			Tile clickedTile = Game.BOARD.getTileAt(row, col);
+
+			// Chọn ô nếu chưa chọn đủ hai ô
+			if (Game.CONTROLS.getFirstSelectedTile() == null) {
+				Game.CONTROLS.selectTile(clickedTile);
+				System.out.println("Chọn ô 1");
+			} else if (Game.CONTROLS.getSecondSelectedTile() == null) {
+				Game.CONTROLS.selectTile(clickedTile);
+				System.out.println("Chọn ô 2");
+			}
+
+			// Vẽ lại giao diện để cập nhật highlight
+			Game.WINDOW.repaint();
 		}
 	}
 }
