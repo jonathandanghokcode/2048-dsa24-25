@@ -1,14 +1,9 @@
 package game;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 public class Grid extends JPanel {
 
@@ -92,29 +87,71 @@ public class Grid extends JPanel {
 	private void drawCountdown(Graphics2D g) {
 		int width = 120;
 		int height = 40;
-		int xOffset = Game.WINDOW.getWidth() - WIN_MARGIN -  (2*width) - TILE_MARGIN - 25;
+		int smallWidth = 60; // Chiều rộng mới cho nền
+		int smallHeight = 40; // Chiều cao không thay đổi
+		int xOffset = Game.WINDOW.getWidth() - WIN_MARGIN -  (2*width) - TILE_MARGIN +50;
 		int yOffset = TILE_MARGIN-74;
-		g.setColor(new Color(0x8B5A2B)); // Thay đổi màu sắc theo yêu cầu
-		g.fillRoundRect(xOffset, yOffset, width, height, TILE_RADIUS, TILE_RADIUS);
-		g.setFont(new Font(FONT, Font.BOLD, 10));
-		g.setColor(new Color(0XFFFFFF));
-		g.drawString("COUNTDOWN UNDO", xOffset + 10, yOffset + 15);
+		// Kiểm tra countdown
+		if (Game.BOARD.getCountdown() == 0) {
+			// Vẽ hình chữ nhật hoặc hình tròn để nổi bật
+			g.setColor(new Color(252, 143, 84)); // Màu sắc nổi bật
+			g.fillRoundRect(xOffset, yOffset, smallWidth, smallHeight, TILE_RADIUS, TILE_RADIUS);
+			g.setColor(new Color(225, 1, 60)); // Màu sắc nổi bật
+			g.drawRoundRect(xOffset, yOffset, smallWidth, smallHeight, TILE_RADIUS, TILE_RADIUS); // Viền cho ô
+			Image undoIcon = new ImageIcon("D:\\Java learing\\2048-dsa24-25 - Copy\\src\\game\\undo.png").getImage(); // Đường dẫn tới biểu tượng Undo
+			g.drawImage(undoIcon, xOffset + 19, yOffset + 10, 22, 22, null); // Vẽ biểu tượng
+		} else {
+			// Vẽ biểu tượng Undo nếu countdown > 0
+			// Vẽ nền nút
+			g.setColor(new Color(253, 231, 187)); // Màu nền
+			g.fillRoundRect(xOffset, yOffset, smallWidth, smallHeight, TILE_RADIUS, TILE_RADIUS);
+			Image undoIcon = new ImageIcon("D:\\Java learing\\2048-dsa24-25 - Copy\\src\\game\\undo.png").getImage(); // Đường dẫn tới biểu tượng Undo
+			g.drawImage(undoIcon, xOffset + 19, yOffset + 10, 22, 22, null); // Vẽ biểu tượng
+		}
+
+		int size = 25; // Kích thước hình tròn
+
+		// Vẽ hình tròn
+		g.setColor(new Color(0xDA9F64)); // Màu nền
+		g.fillOval(xOffset+47, yOffset-12, size, size); // Vẽ hình tròn
+		// Vẽ số 20
 		g.setFont(new Font(FONT, Font.BOLD, 12));
-		g.drawString(String.valueOf(Game.BOARD.getCountdown()), xOffset + 25, yOffset + 30);
+		g.setColor(new Color(0XFFFFFF));
+		g.drawString(String.valueOf(Game.BOARD.getCountdown()), xOffset + 53, yOffset +5);
 	}
 
 	private void drawCountdown_swap(Graphics2D g) {
 		int width = 120; // Đặt lại width để đồng bộ
 		int height = 40; // Giữ nguyên height
-		int xOffset = Game.WINDOW.getWidth() - WIN_MARGIN - (2*width) - TILE_MARGIN - 150; // Đặt xOffset sao cho ở gần drawCountdown
+		int smallWidth = 60; // Chiều rộng mới cho nền
+		int smallHeight = 40; // Chiều cao không thay đổi
+		int xOffset = Game.WINDOW.getWidth() - WIN_MARGIN - (2*width) - TILE_MARGIN - 40; // Đặt xOffset sao cho ở gần drawCountdown
 		int yOffset = TILE_MARGIN-74; // Điều chỉnh vị trí y để tách biệt với drawCountdown
-		g.setColor(new Color(0x8B5A2B)); // Thay đổi màu sắc theo yêu cầu
-		g.fillRoundRect(xOffset, yOffset, width, height, TILE_RADIUS, TILE_RADIUS);
-		g.setFont(new Font(FONT, Font.BOLD, 10));
-		g.setColor(new Color(0XFFFFFF));
-		g.drawString("COUNTDOWN SWAP", xOffset + 10, yOffset + 15);
+		if (Game.BOARD.getCountdownSwap() == 0) {
+			// Vẽ hình chữ nhật hoặc hình tròn để nổi bật
+			g.setColor(new Color(252, 143, 84)); // Màu sắc nổi bật
+			g.fillRoundRect(xOffset, yOffset, smallWidth, smallHeight, TILE_RADIUS, TILE_RADIUS);
+			g.setColor(new Color(225, 1, 60)); // Màu sắc nổi bật
+			g.drawRoundRect(xOffset, yOffset, smallWidth, smallHeight, TILE_RADIUS, TILE_RADIUS); // Viền cho ô
+			Image undoIcon = new ImageIcon("D:\\Java learing\\2048-dsa24-25 - Copy\\src\\game\\swap.jpg").getImage(); // Đường dẫn tới biểu tượng Undo
+			g.drawImage(undoIcon, xOffset + 13, yOffset +3, 35, 35, null); // Vẽ biểu tượng, điều chỉnh vị trí nếu cần;
+		} else {
+			// Vẽ biểu tượng Undo nếu countdown > 0
+			// Vẽ nền nút
+			g.setColor(new Color(253, 231, 187)); // Màu nền
+			g.fillRoundRect(xOffset, yOffset, smallWidth, smallHeight, TILE_RADIUS, TILE_RADIUS);
+			Image undoIcon = new ImageIcon("D:\\Java learing\\2048-dsa24-25 - Copy\\src\\game\\swap.jpg").getImage(); // Đường dẫn tới biểu tượng Undo
+			g.drawImage(undoIcon, xOffset + 17, yOffset + 8, 25, 25, null); // Vẽ biểu tượng
+		}
+		int size = 25; // Kích thước hình tròn
+
+		// Vẽ hình tròn
+		g.setColor(new Color(0xDA9F64)); // Màu nền
+		g.fillOval(xOffset+47, yOffset-12, size, size); // Vẽ hình tròn
+		// Vẽ số 20
 		g.setFont(new Font(FONT, Font.BOLD, 12));
-		g.drawString(String.valueOf(Game.BOARD.getCountdownSwap()), xOffset + 25, yOffset + 30);
+		g.setColor(new Color(0XFFFFFF));
+		g.drawString(String.valueOf(Game.BOARD.getCountdownSwap()), xOffset + 53, yOffset +5);
 	}
 
 	private static void drawTile(Graphics g, Tile tile, int x, int y, int tileSize) {

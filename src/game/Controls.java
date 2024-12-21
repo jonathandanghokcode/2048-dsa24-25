@@ -47,6 +47,10 @@ public class Controls implements KeyListener {
 					Game.BOARD.resetCountdownSwap(); // Đặt lại đếm ngược
 				} else {
 					System.out.println("Cannot be swapped, wait until the countdown is complete.");
+					firstSelectedTile = null;
+					secondSelectedTile = null;
+					// Vẽ lại giao diện để cập nhật highlight
+					Game.WINDOW.repaint();
 				}
 				break;
 			default:
