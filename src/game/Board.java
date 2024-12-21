@@ -1,5 +1,6 @@
 package game;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -15,6 +16,7 @@ public class Board {
 	private boolean genNewTile = false;		// generate new tile when any tile moved
 	private int moveCount = 0; // Biến đếm lượt di chuyển
 	private int countdown = 20; // Biến đếm từ 20 xuống 0
+	private LeaderBoard leaderBoard = new LeaderBoard(); // Đối tượng LeaderBoard
 	private List<List<Tile>> tiles;			// board
 
 	private Stack<List<List<Tile>>> historyStack; // Stack lưu trạng thái trước đó
@@ -43,6 +45,7 @@ public class Board {
 		genInitTiles();
 		//show();
 	}
+
 	public int getSize() {
 		return size;
 	}
@@ -217,14 +220,28 @@ public class Board {
 		countdown--;
 		decrementCountdownSwap();
 	}
+	private void showNameDialogAndAddToLeaderboard() {
+		String playerName = JOptionPane.showInputDialog(null, "Enter your name:", "Game Over", JOptionPane.PLAIN_MESSAGE);
+		if (playerName != null && !playerName.trim().isEmpty()) {
+			Player player = new Player(playerName, score);
+			leaderBoard.addPlayer(player);
+			Window.addPlayerToLeaderboard(player);
+
+		}
+	}
+
 
 	public void isGameOver() {
 		if (gameover) {
 			setWonOrLost("WON");
+			show();
+			showNameDialogAndAddToLeaderboard();
 		} else {
 			if (isFull()) {
 				if (!isMovePossible()) {
 					setWonOrLost("LOST");
+					show();
+					showNameDialogAndAddToLeaderboard();
 				}
 			} else {
 				newRandomTile(); // game continues
