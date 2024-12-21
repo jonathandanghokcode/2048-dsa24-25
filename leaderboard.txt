@@ -11,3 +11,4 @@ nam,240
 nhật nam,192
 nam,116
 n,564
+Duong,428

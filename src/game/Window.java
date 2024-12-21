@@ -96,15 +96,6 @@ public class Window extends JFrame {
 				// Add tutorial functionality here
 			});
 		}
-
-//		else if (text.equalsIgnoreCase("UNDO")) {
-//			button.addActionListener(e -> {
-//				System.out.println("Undo button pressed");
-//				Game.BOARD.undo(); // Gọi phương thức undo
-//				Game.BOARD.isGameOver(); // Kiểm tra trạng thái game sau khi undo
-//				Game.WINDOW.repaint(); // Cập nhật giao diện
-//			});
-//		}
 		return button;
 	}
 
@@ -174,28 +165,6 @@ public class Window extends JFrame {
 		// Display the tutorial
 		tutorialFrame.setVisible(true);
 	}
-
-
-
-
-	//	private JPanel createGamePanel() {
-//		JPanel gamePanel = new JPanel();
-//		gamePanel.setLayout(new BorderLayout());
-//
-//		// Thêm bảng trò chơi
-//		gamePanel.add(new Grid(), BorderLayout.CENTER);
-//
-//		// Nút Undo
-//		JButton undoButton = new JButton("Undo");
-//		undoButton.addActionListener(e -> Game.BOARD.undo()); // Gọi phương thức undo từ BOARD
-//		gamePanel.add(undoButton, BorderLayout.SOUTH); // Thêm nút vào phía dưới
-//
-//		return gamePanel;
-//	}
-
-
-
-
 	private void restartGame() {
 		Game.BOARD.reset();// Reset trạng thái bảng trò chơi
 		Game.CONTROLS.unbind(); // Hủy bỏ các listener trước đó
