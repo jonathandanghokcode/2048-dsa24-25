@@ -98,14 +98,14 @@ public class Grid extends JPanel {
 			g.fillRoundRect(xOffset, yOffset, smallWidth, smallHeight, TILE_RADIUS, TILE_RADIUS);
 			g.setColor(new Color(225, 1, 60)); // Màu sắc nổi bật
 			g.drawRoundRect(xOffset, yOffset, smallWidth, smallHeight, TILE_RADIUS, TILE_RADIUS); // Viền cho ô
-			Image undoIcon = new ImageIcon("D:\\Java learing\\2048-dsa24-25 - Copy\\src\\game\\undo.png").getImage(); // Đường dẫn tới biểu tượng Undo
+			Image undoIcon = new ImageIcon("src\\game\\undo.png").getImage(); // Đường dẫn tới biểu tượng Undo
 			g.drawImage(undoIcon, xOffset + 19, yOffset + 10, 19, 19, null); // Vẽ biểu tượng
 		} else {
 			// Vẽ biểu tượng Undo nếu countdown > 0
 			// Vẽ nền nút
 			g.setColor(new Color(253, 231, 187)); // Màu nền
 			g.fillRoundRect(xOffset, yOffset, smallWidth, smallHeight, TILE_RADIUS, TILE_RADIUS);
-			Image undoIcon = new ImageIcon("D:\\Java learing\\2048-dsa24-25 - Copy\\src\\game\\undo.png").getImage(); // Đường dẫn tới biểu tượng Undo
+			Image undoIcon = new ImageIcon("src\\game\\undo.png").getImage(); // Đường dẫn tới biểu tượng Undo
 			g.drawImage(undoIcon, xOffset + 19, yOffset + 10, 19, 19, null); // Vẽ biểu tượng
 		}
 
@@ -133,14 +133,14 @@ public class Grid extends JPanel {
 			g.fillRoundRect(xOffset, yOffset, smallWidth, smallHeight, TILE_RADIUS, TILE_RADIUS);
 			g.setColor(new Color(225, 1, 60)); // Màu sắc nổi bật
 			g.drawRoundRect(xOffset, yOffset, smallWidth, smallHeight, TILE_RADIUS, TILE_RADIUS); // Viền cho ô
-			Image swapIcon = new ImageIcon("D:\\Java learing\\2048-dsa24-25 - Copy\\src\\game\\swap.jpg").getImage(); // Đường dẫn tới biểu tượng swap
+			Image swapIcon = new ImageIcon("src\\game\\swap.jpg").getImage(); // Đường dẫn tới biểu tượng swap
 			g.drawImage(swapIcon, xOffset + 17, yOffset +8, 25, 25, null); // Vẽ biểu tượng, điều chỉnh vị trí nếu cần;
 		} else {
 			// Vẽ biểu tượng swap nếu countdown > 0
 			// Vẽ nền nút
 			g.setColor(new Color(253, 231, 187)); // Màu nền
 			g.fillRoundRect(xOffset, yOffset, smallWidth, smallHeight, TILE_RADIUS, TILE_RADIUS);
-			Image swapIcon = new ImageIcon("D:\\Java learing\\2048-dsa24-25 - Copy\\src\\game\\swap.jpg").getImage(); // Đường dẫn tới biểu tượng swap
+			Image swapIcon = new ImageIcon("src\\game\\swap.jpg").getImage(); // Đường dẫn tới biểu tượng swap
 			g.drawImage(swapIcon, xOffset + 17, yOffset + 8, 25, 25, null); // Vẽ biểu tượng
 		}
 		int size = 25; // Kích thước hình tròn
