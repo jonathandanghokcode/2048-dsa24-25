@@ -87,6 +87,7 @@ public class Board {
 				sequence.remove(l + 1);
 				genNewTile = true; // board has changed its state
 				emptyTiles++;
+				SoundPlayer.playSound("sounds/merge.wav");
 			}
 		}
 		return sequence;
@@ -134,6 +135,7 @@ public class Board {
 		for (int col = 0; col < tiles.size(); col++) {
 			if (moved.get(col).hasMoved(row, col)) {
 				genNewTile = true;
+				SoundPlayer.playSound("sounds/move.wav");
 			}
 			setTileAt(row, col, moved.get(col));
 		}
@@ -145,6 +147,7 @@ public class Board {
 		for (int col = 0; col < tiles.size(); col++) {
 			if (moved.get(col).hasMoved(col, row)) {
 				genNewTile = true;
+				SoundPlayer.playSound("sounds/move.wav");
 			}
 			setTileAt(col, row, moved.get(col));
 		}

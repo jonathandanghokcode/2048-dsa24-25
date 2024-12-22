@@ -11,3 +11,8 @@ nam,240
 nhật nam,192
 nam,116
 n,564
+<<<<<<< HEAD
+jack,2692
+=======
+Duong,428
+>>>>>>> b3c8597ed3e28b92494ab85a492c89d05bcb81e2
